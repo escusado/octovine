@@ -1,0 +1,6 @@
+{
+  "vinerEndpoint" : "http://localhost:5000",
+  "captureName" : "capture.jpg",
+  "storage"  : "/storage/",
+  "webPort" : 3000
+}

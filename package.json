@@ -1,0 +1,20 @@
+{
+  "name": "viner-client",
+  "description": "vine stuff",
+  "repository": "https://github.com/escusado/neon-bootstrap",
+  "version": "0.1.0",
+  "engines": {
+    "node": "0.10.30"
+  },
+  "dependencies": {
+    "express": "~4.8.2",
+    "http": "0.0.0",
+    "neon": "~2.0.0",
+    "socket.io-client": "^1.3.5",
+    "yargs": "^3.5.4"
+  },
+  "scripts": {
+    "start_client": "node bin/client.js -c config/client.config.json",
+    "start_server": "node bin/server.js -c config/server.config.json"
+  }
+}
