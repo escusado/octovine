@@ -48,12 +48,11 @@ Class('Client')({
     },
 
     _setRoutes : function _setRoutes(){
-      app.get('/print_start', function(req, res){
+      app.get('/print_started', function(req, res){
         res.end();
-        console.log('>>>', this._connected);
         if(this._connected){
           // this._handle
-          console.log('print start');
+          console.log('print_started');
           this._printStart();
         }else{
           console.log('viner unavailable');
@@ -71,21 +70,31 @@ Class('Client')({
         }
       }.bind(this));
 
-      app.get('/print_end', function(req, res){
+      app.get('/print_done', function(req, res){
         res.end();
         if(this._connected){
           // this._handle
-          console.log('print_end');
+          console.log('print_done');
         }else{
           console.log('viner unavailable');
         }
       }.bind(this));
 
-      app.get('/print_cancel', function(req, res){
+      app.get('/print_cancelled', function(req, res){
         res.end();
         if(this._connected){
           // this._handle
-          console.log('print_cancel');
+          console.log('print_cancelled');
+        }else{
+          console.log('viner unavailable');
+        }
+      }.bind(this));
+
+      app.get('/print_failed', function(req, res){
+        res.end();
+        if(this._connected){
+          // this._handle
+          console.log('print_failed');
         }else{
           console.log('viner unavailable');
         }
@@ -127,7 +136,8 @@ Class('Client')({
           filePath = appRoot+this.config.storage+this.config.captureName;
 
       raspistill = new Raspistill({
-        filePath : filePath
+        filePath : filePath,
+        config : this.config
       });
 
       raspistill.capture(function(){
