@@ -1,5 +1,6 @@
 {
-  "vinerEndpoint" : "viner.stoner.engineering",
-  "fileName" : "capture.jpg",
-  "storage"  : "storage/"
+  "vinerEndpoint" : "http://localhost:5000",
+  "captureName" : "capture.jpg",
+  "storage"  : "/storage/",
+  "webPort" : 3000
 }
