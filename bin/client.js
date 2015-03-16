@@ -1,10 +1,11 @@
 require('neon');
 
-var io = require ('socket.io-client'),
+var appRoot = process.cwd(),
+    io = require ('socket.io-client'),
     fs = require('fs'),
     exec = require('child_process').exec,
-    FileUploader = require('../lib/FileUploader.js'),
-    Raspistill = require('../lib/Raspistill.js'),
+    FileUploader = require(appRoot+'/lib/FileUploader.js'),
+    Raspistill = require(appRoot+'/lib/Raspistill.js'),
     argv = require('yargs').argv,
     express = require('express'),
     http    = require('http'),
@@ -123,7 +124,7 @@ Class('Client')({
 
     _captureAndSendImage : function _captureAndSendImage(){
       var raspistill,
-          filePath = process.cwd()+this.config.storage+this.config.captureName;
+          filePath = appRoot+this.config.storage+this.config.captureName;
 
       raspistill = new Raspistill({
         filePath : filePath
