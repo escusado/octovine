@@ -121,6 +121,12 @@ Class('Client')({
         this._connected = true;
         console.log('Connected to Viner at: ', this.config.vinerEndpoint);
       }.bind(this));
+
+      this.socket.on('disconnect', function (socket) {
+        // this.socket = socket;
+        this._connected = false;
+        console.log('Disconnection from Viner at: ', this.config.vinerEndpoint);
+      }.bind(this));
     },
 
     _printStart : function _printStart(){
