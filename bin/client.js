@@ -64,6 +64,7 @@ Class('Client')({
         if(this._connected){
           // this._handle
           console.log('z_change');
+          this._captureAndSendImage();
         }else{
           console.log('viner unavailable');
         }
@@ -122,18 +123,14 @@ Class('Client')({
 
     _captureAndSendImage : function _captureAndSendImage(){
       var raspistill,
-          filePath = './'+this.config.storage+this.config.filePath;
+          filePath = process.cwd()+this.config.storage+this.config.captureName;
 
       raspistill = new Raspistill({
         filePath : filePath
       });
 
       raspistill.capture(function(){
-        fileUploader = new FileUploader({
-          socket : this.socket,
-          path : this.config.storage,
-          fileName : this.config.captureName
-        });
+        console.log('>>> created');
       });
     }
   }
