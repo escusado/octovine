@@ -105,7 +105,8 @@ Class('Client')({
       this.currentPrint = {
         id : timestamp,
         storage : {},
-        name : 'my-print-'+timestamp
+        name : 'my-print-'+timestamp,
+        status : 'print_started'
       };
 
       this.firebaseRef.child(this.currentPrint.id).set(this.currentPrint);
@@ -128,26 +129,39 @@ Class('Client')({
         console.log('>captured');
 
         var capture = {
+          timestamp : new Date().getTime(),
           data : fs.readFileSync(filePath).toString('base64')
         };
 
         this.currentPrintStorage.push(capture, function(){
           console.log('>saved');
-        });
+          this.firebaseRef.child(this.currentPrint.id).update({
+            status : 'z_change'
+          });
+        }.bind(this));
 
       }.bind(this));
     },
 
     print_done : function print_done(){
-      console.log('> meprint_done');
+      console.log('> print_done');
+      this.firebaseRef.child(this.currentPrint.id).update({
+        status : 'print_done'
+      });
     },
 
     print_cancelled : function print_cancelled(){
-      console.log('> meprint_cancelled');
+      console.log('> print_cancelled');
+      this.firebaseRef.child(this.currentPrint.id).update({
+        status : 'print_cancelled'
+      });
     },
 
     print_failed : function print_failed(){
-      console.log('> meprint_failed');
+      console.log('> print_failed');
+      this.firebaseRef.child(this.currentPrint.id).update({
+        status : 'print_failed'
+      });
     }
 
   }
