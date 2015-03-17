@@ -12,7 +12,6 @@ var appRoot = process.cwd(),
     server  = http.createServer(app),
     argv = require('yargs').argv,
     Firebase = require('firebase');
-    // z04An9iKDp6wPMqGzouKXeb2C0a9jd5NCLA1JzHL
 
 Class('Client')({
   prototype : {
@@ -115,7 +114,7 @@ Class('Client')({
 
       raspistill.capture(function(){
 
-        console.log('>>> created');
+        console.log('>captured');
 
         var capture = {
           data : fs.readFileSync(filePath).toString('base64')
@@ -123,6 +122,7 @@ Class('Client')({
 
         this.currentPrintStorage.push(capture);
 
+        console.log('>saved');
       }.bind(this));
     },
 
