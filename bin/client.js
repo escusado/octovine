@@ -4,7 +4,6 @@ var appRoot = process.cwd(),
     io = require ('socket.io-client'),
     fs = require('fs'),
     exec = require('child_process').exec,
-    FileUploader = require('../lib/FileUploader.js'),
     Raspistill = require('../lib/Raspistill.js'),
     argv = require('yargs').argv,
     express = require('express'),
@@ -12,15 +11,16 @@ var appRoot = process.cwd(),
     app     = express(),
     server  = http.createServer(app),
     argv = require('yargs').argv,
-    Dropbox = require('dropbox'),
-    dropboxClient = new Dropbox.Client({token : '-AujDJ1JiaIAAAAAAAAKDwFzLqNKtBTNtVbvXpYD6NRWRi6WavlYGv29lK0ZCy70'});
+    Firebase = require('firebase');
+    // z04An9iKDp6wPMqGzouKXeb2C0a9jd5NCLA1JzHL
 
 Class('Client')({
   prototype : {
 
-    _connected : null,
-
     config: null,
+    firebaseRef : null,
+    currentPrint : null,
+    currentPrintStorage : null,
 
     init : function init (config){
 
@@ -28,9 +28,9 @@ Class('Client')({
         this[property] = config[property];
       }, this);
 
-      this._connected = false;
+      //load config
+      this.config = JSON.parse(fs.readFileSync(this.configFile), 'utf-8');
 
-      this._loadConfig();
       this._configureApp();
       this._setRoutes();
       this._serverStart();
@@ -46,100 +46,65 @@ Class('Client')({
         next();
       });
 
+      //Firebase
+      this.firebaseRef = new Firebase(this.config.firebasePrintsEndpoint);
+
       return this;
     },
 
     _setRoutes : function _setRoutes(){
-      app.get('/print_started', function(req, res){
+
+      //simple router
+      app.get('/:method', function(req, res){
         res.end();
-        if(this._connected){
-          // this._handle
-          console.log('print_started');
-          this._printStart();
-        }else{
-          console.log('viner unavailable');
+        console.log('method: ', req.params.method);
+
+        var controllers = {
+          'print_started'   : this.print_started.bind(this),
+          'z_change'        : this.z_change.bind(this),
+          'print_done'      : this.print_done.bind(this),
+          'print_cancelled' : this.print_cancelled.bind(this),
+          'print_failed'    : this.print_failed.bind(this)
+        };
+
+        if(controllers[req.params.method]){
+          controllers[req.params.method](req.params);
         }
+
       }.bind(this));
 
-      app.get('/z_change', function(req, res){
-        res.end();
-        if(this._connected){
-          // this._handle
-          console.log('z_change');
-          this._captureAndSendImage();
-        }else{
-          console.log('viner unavailable');
-        }
-      }.bind(this));
-
-      app.get('/print_done', function(req, res){
-        res.end();
-        if(this._connected){
-          // this._handle
-          console.log('print_done');
-        }else{
-          console.log('viner unavailable');
-        }
-      }.bind(this));
-
-      app.get('/print_cancelled', function(req, res){
-        res.end();
-        if(this._connected){
-          // this._handle
-          console.log('print_cancelled');
-        }else{
-          console.log('viner unavailable');
-        }
-      }.bind(this));
-
-      app.get('/print_failed', function(req, res){
-        res.end();
-        if(this._connected){
-          // this._handle
-          console.log('print_failed');
-        }else{
-          console.log('viner unavailable');
-        }
-      }.bind(this));
-
-      return this;
     },
 
+    //kickstart webserver
     _serverStart : function _serverStart(){
       console.log('Server ready');
       console.log('http://localhost:'+this.config.webPort.toString());
-
-      this._connectToViner();
 
       server.listen(this.config.webPort);
 
       return this;
     },
 
-    _connectToViner : function _connectToViner(){
-      this.socket = io(this.config.vinerEndpoint);
-      this.socket.on('connect', function (socket) {
-        // this.socket = socket;
-        this._connected = true;
-        console.log('Connected to Viner at: ', this.config.vinerEndpoint);
-      }.bind(this));
+    //Printer event handlers
 
-      this.socket.on('disconnect', function (socket) {
-        // this.socket = socket;
-        this._connected = false;
-        console.log('Disconnection from Viner at: ', this.config.vinerEndpoint);
-      }.bind(this));
+    print_started : function print_started(params){
+      console.log('>print_started');
+
+      var timestamp = new Date().getTime();
+
+      this.currentPrint = {
+        id : timestamp,
+        storage : {},
+        name : 'my-print-'+timestamp
+      };
+
+      this.firebaseRef.child(this.currentPrint.id).set(this.currentPrint);
+      this.currentPrintStorage = new Firebase(this.config.firebasePrintsEndpoint+'/'+this.currentPrint.id+'/storage/');
     },
 
-    _printStart : function _printStart(){
-      this.socket.emit('print_start');
-    },
+    z_change : function z_change(params){
+      console.log('>z_change');
 
-    _loadConfig : function _loadConfig(){
-      return this.config = JSON.parse(fs.readFileSync(this.configFile), 'utf-8');
-    },
-
-    _captureAndSendImage : function _captureAndSendImage(){
       var raspistill,
           filePath = appRoot+this.config.storage+this.config.captureName;
 
@@ -149,16 +114,30 @@ Class('Client')({
       });
 
       raspistill.capture(function(){
-        console.log('>>> created');
-        dropboxClient.writeFile(this.config.captureName, fs.readFileSync(filePath), function(error, stat) {
-          if (error) {
-            return showError(error);  // Something went wrong.
-          }
 
-          console.log("File saved as revision " + stat.versionTag);
-        }.bind(this));
+        console.log('>>> created');
+
+        var capture = {
+          data : fs.readFileSync(filePath).toString('base64')
+        };
+
+        this.currentPrintStorage.push(capture);
+
       }.bind(this));
+    },
+
+    print_done : function print_done(){
+      console.log('> meprint_done');
+    },
+
+    print_cancelled : function print_cancelled(){
+      console.log('> meprint_cancelled');
+    },
+
+    print_failed : function print_failed(){
+      console.log('> meprint_failed');
     }
+
   }
 });
 
