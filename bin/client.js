@@ -68,11 +68,11 @@ Class('Client')({
         console.log('method: ', req.params.method);
 
         var controllers = {
-          'print_started'   : this.print_started,
-          'z_change'        : this.z_change,
-          'print_done'      : this.print_done,
-          'print_cancelled' : this.print_cancelled,
-          'print_failed'    : this.print_failed
+          'print_started'   : this.print_started.bind(this),
+          'z_change'        : this.z_change.bind(this),
+          'print_done'      : this.print_done.bind(this),
+          'print_cancelled' : this.print_cancelled.bind(this),
+          'print_failed'    : this.print_failed.bind(this)
         };
 
         if(controllers[req.params.method] && this._firebaseAvailable){
