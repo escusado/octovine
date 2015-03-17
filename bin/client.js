@@ -47,6 +47,13 @@ Class('Client')({
 
       //Firebase
       this.firebaseRef = new Firebase(this.config.firebasePrintsEndpoint);
+      this.firebaseRef.authWithCustomToken(this.config.firebaseToken, function(error, authData){
+        if (error) {
+          console.log("Login Failed!", error);
+        } else {
+          console.log("Authenticated successfully with payload:", authData);
+        }
+      });
 
       return this;
     },
