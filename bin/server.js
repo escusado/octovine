@@ -101,6 +101,7 @@ Class('MonitorServer')({
       var image = snap.val();
       fs.writeFileSync(appRoot+this.config.storage+this.currentPrint.id+'/'+image.timestamp+'.jpg', image.data, 'base64');
       this.currentPrintStorage.set(null);
+      console.log('>image saved: ', this.currentPrint.id, image.timestamp+'.jpg');
     }
   }
 });

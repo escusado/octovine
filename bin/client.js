@@ -98,7 +98,6 @@ Class('Client')({
     //Printer event handlers
 
     print_started : function print_started(params){
-      console.log('>print_started');
 
       var timestamp = new Date().getTime();
 
@@ -111,6 +110,7 @@ Class('Client')({
 
       this.firebaseRef.child(this.currentPrint.id).set(this.currentPrint);
       this.currentPrintStorage = new Firebase(this.config.firebasePrintsEndpoint+'/'+this.currentPrint.id+'/storage/');
+      console.log('>print_started', timestamp);
     },
 
     z_change : function z_change(params){
