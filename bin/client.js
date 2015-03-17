@@ -20,6 +20,7 @@ Class('Client')({
     firebaseRef : null,
     currentPrint : null,
     currentPrintStorage : null,
+    _firebaseAvailable : null,
 
     init : function init (config){
 
@@ -51,9 +52,10 @@ Class('Client')({
         if (error) {
           console.log("Login Failed!", error);
         } else {
-          console.log("Authenticated successfully with payload:", authData);
+          console.log('>firebase available!');
+          this._firebaseAvailable = true;
         }
-      });
+      }.bind(this));
 
       return this;
     },
@@ -73,8 +75,10 @@ Class('Client')({
           'print_failed'    : this.print_failed.bind(this)
         };
 
-        if(controllers[req.params.method]){
+        if(controllers[req.params.method] && this._firebaseAvailable){
           controllers[req.params.method](req.params);
+        }else{
+          console.log('>error: ', req.params.method, this._firebaseAvailable);
         }
 
       }.bind(this));
@@ -127,9 +131,10 @@ Class('Client')({
           data : fs.readFileSync(filePath).toString('base64')
         };
 
-        this.currentPrintStorage.push(capture);
+        this.currentPrintStorage.push(capture, function(){
+          console.log('>saved');
+        });
 
-        console.log('>saved');
       }.bind(this));
     },
 
