@@ -11,7 +11,9 @@ var appRoot = process.cwd(),
     http    = require('http'),
     app     = express(),
     server  = http.createServer(app),
-    argv = require('yargs').argv;
+    argv = require('yargs').argv,
+    Dropbox = require('dropbox'),
+    dropboxClient = new Dropbox.Client({token : '-AujDJ1JiaIAAAAAAAAKDwFzLqNKtBTNtVbvXpYD6NRWRi6WavlYGv29lK0ZCy70'});
 
 Class('Client')({
   prototype : {
@@ -148,7 +150,14 @@ Class('Client')({
 
       raspistill.capture(function(){
         console.log('>>> created');
-      });
+        dropboxClient.writeFile(this.config.captureName, fs.readFileSync(filePath), function(error, stat) {
+          if (error) {
+            return showError(error);  // Something went wrong.
+          }
+
+          console.log("File saved as revision " + stat.versionTag);
+        }.bind(this));
+      }.bind(this));
     }
   }
 });
