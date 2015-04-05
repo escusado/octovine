@@ -65,21 +65,21 @@ Class('Client')({
       //simple router
       app.get('/:method', function(req, res){
         res.end();
-        console.log('method: ', req.params.method);
+        // console.log('method: ', req.params.method);
 
-        var controllers = {
-          'print_started'   : this.print_started.bind(this),
-          'z_change'        : this.z_change.bind(this),
-          'print_done'      : this.print_done.bind(this),
-          'print_cancelled' : this.print_cancelled.bind(this),
-          'print_failed'    : this.print_failed.bind(this)
-        };
+        // var controllers = {
+        //   'print_started'   : this.print_started.bind(this),
+        //   'z_change'        : this.z_change.bind(this),
+        //   'print_done'      : this.print_done.bind(this),
+        //   'print_cancelled' : this.print_cancelled.bind(this),
+        //   'print_failed'    : this.print_failed.bind(this)
+        // };
 
-        if(controllers[req.params.method] && this._firebaseAvailable){
-          controllers[req.params.method](req.params);
-        }else{
-          console.log('>error: ', req.params.method, this._firebaseAvailable);
-        }
+        // if(controllers[req.params.method] && this._firebaseAvailable){
+        //   controllers[req.params.method](req.params);
+        // }else{
+        //   console.log('>error: ', req.params.method, this._firebaseAvailable);
+        // }
 
       }.bind(this));
 
