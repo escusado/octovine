@@ -7,15 +7,18 @@
     "node": "0.10.30"
   },
   "dependencies": {
+    "execSync": "^1.0.2",
     "express": "~4.8.2",
     "firebase": "^2.2.2",
+    "fs-finder": "^1.8.0",
     "http": "0.0.0",
+    "minimist": "^1.1.1",
     "neon": "~2.0.0",
     "socket.io-client": "^1.3.5",
     "yargs": "^3.5.4"
   },
   "scripts": {
-    "start_client": "node bin/client.js -c config/client.config.json",
+    "start": "node bin/client.js -c config/client.config.json",
     "start_server": "node bin/server.js -c config/server.config.json"
   }
 }
