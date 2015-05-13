@@ -1,11 +1,4 @@
-// var
-//     path = require('path'),
-//     storage = path.resolve('./storage'),
-//     touchCommand = 'touch '+storage+'/'+encodeURIComponent(argv.data);
-
-// sh.run(touchCommand);
-
-
+//printercommand: node /home/pi/apps/octovine/bin/saveMeta.js --data "command|%(data)s|%(filename)s|%(progress)s|%(currentZ)s|%(now)s"
 
 var exec = require('child_process').exec,
   path = require('path'),
