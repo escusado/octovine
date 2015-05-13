@@ -3,7 +3,6 @@
 var filename,
     exec = require('child_process').exec,
     path = require('path'),
-    sh = require('execSync'),
     storage = path.resolve('./storage'),
     Finder = require('fs-finder'),
     removeCommand = 'rm '+storage+'/*',
@@ -19,6 +18,6 @@ if (files[0]) {
       if (error !== null) {
         console.log('exec error: ' + error);
       }
-      sh.run(removeCommand);
+       exec(removeCommand, function (error, stdout, stderr) {});
   });
 }
