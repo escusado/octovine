@@ -7,21 +7,23 @@ var filename,
     storage = path.resolve('./storage'),
     Finder = require('fs-finder'),
     removeCommand = 'rm '+storage+'/*',
-    server = 'http://192.168.100.4:3000/',
+    server = 'http://192.168.100.4:3000/';
 
-    files = Finder.in(storage).findFiles(),
-    watcher = hound.watch(storage);
 
-watcher.on('create', function (f, curr, prev) {
+setInterval(function(){
+
+  files = Finder.in(storage).findFiles();
   if (files[0]) {
     filename = path.basename(files[0]);
+    console.log('>>>>>');
     exec('curl '+server+filename, function (error, stdout, stderr) {
-        console.log('stdout: ' + stdout);
-        console.log('stderr: ' + stderr);
-        if (error !== null) {
-          console.log('exec error: ' + error);
-        }
-         exec(removeCommand, function (error, stdout, stderr) {});
+      console.log('stdout: ' + stdout);
+      console.log('stderr: ' + stderr);
+      if (error !== null) {
+        console.log('exec error: ' + error);
+      }
+       exec(removeCommand, function (error, stdout, stderr) {});
     });
   }
-});
+
+}, 1000);
