@@ -7,7 +7,7 @@ var filename,
     storage = path.resolve('./storage'),
     Finder = require('fs-finder'),
     removeCommand = 'rm '+storage+'/*',
-    server = 'http://192.168.100.7:3000/',
+    server = 'http://192.168.100.4:3000/',
 
     files = Finder.in(storage).findFiles(),
     watcher = hound.watch(storage);
